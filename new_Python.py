@@ -1,13 +1,14 @@
+R0 = 0
 R1 = 0
 R2 = 0
 R3 = 0
 R4 = 0
 R5 = 0
 R6 = 0
-OVERFLOW = 0
-EQUAL = 0
-GREATERTHAN = 0
-LESSTHAN = 0
+V = 0
+E = 0
+G = 0
+L = 0
 def stringtobinary(string):
     returnstring="000"
     num = int(string)
