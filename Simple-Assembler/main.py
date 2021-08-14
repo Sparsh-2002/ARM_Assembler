@@ -157,30 +157,30 @@ def MoveRegister(rx, ry):
 
 # Performs reg3/reg4 Stores the quotient in R0 and the remainder in R1.
 def Divide(rx, ry):
-    R["R0"] = R[rx]//R[ry]
-    R["R1"] = R[rx]%R[ry]
-    print('00111' + stringtobinary(rx[1:]) + stringtobinary(ry[1:]))
+  R["R0"] = R[rx]//R[ry]
+  R["R1"] = R[rx]%R[ry]
+  print('00111' + stringtobinary(rx[1:]) + stringtobinary(ry[1:]))
 
 # Performs bitwise NOT of reg2. Stores the result in reg1.
 def Invert(rx, ry):
-    # string = "101"
-    string = bin(R[ry][2:])
-    n = len(string)
-    answer=""
-    for i in range(n):
-      if string[i]=="1":
-        answer+="0"
-      else:
-        answer+="1"
+  # string = "101"
+  string = bin(R[ry][2:])
+  n = len(string)
+  answer=""
+  for i in range(n):
+    if string[i]=="1":
+      answer+="0"
+    else:
+      answer+="1"
 def stringtodecimal(string):
-    n = len(string)
-    num = 0
-    for i in range(n):
-      num*=2
-      if string[i]=="1":
-        num+=1
-    return num
-    print(stringtodecimal(answer))
+  n = len(string)
+  num = 0
+  for i in range(n):
+    num*=2
+    if string[i]=="1":
+      num+=1
+  return num
+  print(stringtodecimal(answer))
 
 # Compares reg1 and reg2 and sets up the FLAGS register.
 def Compare(rx, ry):
@@ -210,70 +210,69 @@ def check_label(line,i):
       return True
     return False    
 
-
 fullcode=[]
 
 while(True):
-    fullcode.append(input())
-    temp = fullcode[-1]
-    if temp == "hlt":
-      break
-    islabel = check_label(temp,len(fullcode))
-    temp = temp.split(":")
-    #print(temp)
-    fullcode.pop() 
-    if islabel:
-      fullcode.append(temp[1].split())
-    else: 
-      fullcode.append(temp[0].split())
+  fullcode.append(input())
+  temp = fullcode[-1]
+  if temp == "hlt":
+    break
+  islabel = check_label(temp,len(fullcode))
+  temp = temp.split(":")
+  #print(temp)
+  fullcode.pop() 
+  if islabel:
+    fullcode.append(temp[1].split())
+  else: 
+    fullcode.append(temp[0].split())
     
 #print(len(fullcode))
 curIndex = 0
 while(True):
-        if curIndex == len(fullcode):
-            print("1001100000000000")
-            break
-        currentcode = fullcode[curIndex]
-        
-        curIndex+=1
-        #print(currentcode)
-        if(currentcode[0]=="add"):
-            add(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="sub"):
-            sub(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="mul"):
-            multiply(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="xor"):
-            xor(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="or"):
-            OR(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="and"):
-            AND(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0] == "mov"):
-            if currentcode[2][0] == '$':
-              move_imm(currentcode[1],int(currentcode[2][1:]))
-            else:
-              MoveRegister(currentcode[1], currentcode[2])
-        if currentcode[0]=="st":
-            Store(currentcode[1], currentcode[2], curIndex)
-        if(currentcode[0] == 'div'):
-            Divide(currentcode[1], currentcode[2])
-        if(currentcode[0] == 'not'):
-            Invert(currentcode[1], currentcode[2])
-        if(currentcode[0] == 'cmp'):
-            Compare(currentcode[1], currentcode[2])
+  if curIndex == len(fullcode):
+      print("1001100000000000")
+      break
+  currentcode = fullcode[curIndex]
+  
+  curIndex+=1
+  #print(currentcode)
+  if(currentcode[0]=="add"):
+      add(currentcode[1], currentcode[2], currentcode[3])
+  if(currentcode[0]=="sub"):
+      sub(currentcode[1], currentcode[2], currentcode[3])
+  if(currentcode[0]=="mul"):
+      multiply(currentcode[1], currentcode[2], currentcode[3])
+  if(currentcode[0]=="xor"):
+      xor(currentcode[1], currentcode[2], currentcode[3])
+  if(currentcode[0]=="or"):
+      OR(currentcode[1], currentcode[2], currentcode[3])
+  if(currentcode[0]=="and"):
+      AND(currentcode[1], currentcode[2], currentcode[3])
+  if(currentcode[0] == "mov"):
+      if currentcode[2][0] == '$':
+        move_imm(currentcode[1],int(currentcode[2][1:]))
+      else:
+        MoveRegister(currentcode[1], currentcode[2])
+  if currentcode[0]=="st":
+      Store(currentcode[1], currentcode[2], curIndex)
+  if(currentcode[0] == 'div'):
+      Divide(currentcode[1], currentcode[2])
+  if(currentcode[0] == 'not'):
+      Invert(currentcode[1], currentcode[2])
+  if(currentcode[0] == 'cmp'):
+      Compare(currentcode[1], currentcode[2])
 
-        if(currentcode[0] == 'rs'):
-            right_shift(currentcode[1], int(currentcode[2][1:]))
+  if(currentcode[0] == 'rs'):
+      right_shift(currentcode[1], int(currentcode[2][1:]))
 
-        if(currentcode[0] == 'ls'):
-            left_shift(currentcode[1], int(currentcode[2][1:]))
-            
-        if(R["Error"]==1):
-            print("1001100000000000")
-            break
+  if(currentcode[0] == 'ls'):
+      left_shift(currentcode[1], int(currentcode[2][1:]))
+      
+  if(R["Error"]==1):
+      print("1001100000000000")
+      break
 
-        #debug()
+  #debug()
 
 def stringtobinary_8bit(string):
   n = int(string)
