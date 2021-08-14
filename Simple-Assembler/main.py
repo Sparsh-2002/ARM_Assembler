@@ -111,45 +111,42 @@ def unconditionaljump(mem_add):
   return True
 
 def jumpiflessthan(mem_add):
-  if L==1:
+  if R["L"]==1:
     return True
   print("10000"+ stringtobinary(mem_add))
   return False
 
 def jumpifgreaterthan(mem_add):
-  if G==1:
+  if R["G"]==1:
     return True
   print("10001"+ stringtobinary(mem_add))
   return False
 
 def jumpifequalto(mem_add):
-  if E==1:
+  if R["E"]==1:
     return True
   print("10010"+ stringtobinary(mem_add))
   return False
-
-
 def right_shift(R1,imm):
-    if imm<0 or imm>255:
-      R["Error"] = 1
-      return
+  if imm<0 or imm>255:
+    R["Error"] = 1
+    return
 
-    x = R[R1]
-    for i in range(imm):
-      x*=2
-    R[R1]= x
-    print("01000"+stringtobinary(R1[1:])+stringtobinary(imm))
+  x = R[R1]
+  for i in range(imm):
+    x*=2
+  R[R1]= x
+  print("01000"+stringtobinary(R1[1:])+stringtobinary(imm))
 
 def left_shift(R1,imm):
-    if imm<0 or imm>255:
-        R["Error"] = 1
-        return
-
-    x = R[R1]
-    for i in range(imm):
-      x/=2
-    R[R1]= x
-    print("01000"+stringtobinary(R1[1:])+stringtobinary(imm))
+  if imm<0 or imm>255:
+      R["Error"] = 1
+      return
+  x = R[R1]
+  for i in range(imm):
+    x/=2
+  R[R1]= x
+  print("01000"+stringtobinary(R1[1:])+stringtobinary(imm))
 
 ## sahas add here: ok
 # C
@@ -161,7 +158,7 @@ def MoveRegister(rx, ry):
 # Performs reg3/reg4 Stores the quotient in R0 and the remainder in R1.
 def Divide(rx, ry):
     R["R0"] = R[rx]//R[ry]
-    R[R1] = R[rx]%R[ry]
+    R["R1"] = R[rx]%R[ry]
     print('00111' + stringtobinary(rx[1:]) + stringtobinary(ry[1:]))
 
 # Performs bitwise NOT of reg2. Stores the result in reg1.
