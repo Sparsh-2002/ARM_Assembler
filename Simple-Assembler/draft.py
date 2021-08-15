@@ -1,38 +1,18 @@
 from read_file import *
-# R = {
-#     "R0" : 1,
-#     "R1" : 0,
-#     "R2" : 0,
-#     "R3" : 0,
-#     "R4" : 0,
-#     "R5" : 0,
-#     "R6" : 0,
-#     "R7" : 0,
-#     "R8" : 0,
-#     "R9" : 0,
-#     "R10" : 0,
-#     "R11" : 0,
-#     "R12" : 0,
-#     "v"  : 0,
-#     "E"  : 0,
-#     "G"  : 0,
-#     "L"  : 0,
-#     "Error" : 0,
-# }
 R = {
-    "R0" : 1,
+    "R0" : 0,
     "R1" : 0,
     "R2" : 0,
     "R3" : 0,
     "R4" : 0,
     "R5" : 0,
     "R6" : 0,
-    "FLAGS" : 7, # here
-    "V"  : 0, # caps
+    "FLAGS" : 7, 
+    "V"  : 0, 
     "L"  : 0,
     "G"  : 0,
     "E"  : 0,
-    "Error" : 0, # why?
+    "Error" : 0, 
 }
 
 FLAGS = {'V': 0, 'L': 0, 'G': 0, 'E': 0}
@@ -64,7 +44,7 @@ def validreg(string):
 
 def debug(temp):
     for i in temp.keys():
-        print(i +": "+ str(R[i]))
+        print(i +": "+ str(temp[i]))
 
 def BinaryToDecimal(binary):
     decimal = 0
@@ -270,7 +250,6 @@ def stringtodecimal(string):
         if string[i]=="1":
             num+=1
     return num
-    print(stringtodecimal(answer))
 
 # Compares reg1 and reg2 and sets up the FLAGS register.
 def Compare(rx, ry):
@@ -318,11 +297,23 @@ def check_label(line,i):
     return False
 
 def check_input_label(text):
+    if text in var.keys():
+        print("Error")
+        R["Error"] = 1
+        return
     for i, j in labels.items():
         if i == text:
-            return j   
+            return i
+        else:
+            print("Error")
+            R["Error"] = 1
+            return
 
 def storevar(variable):
+    if variable in labels.keys():
+        print("Error")
+        R["Error"] = 1
+        return
     if variable in var.keys():
         print("Variable already defined")
         R["Error"] = 1
@@ -472,20 +463,39 @@ while(True):
         varIndex = -1 
     elif currentcode[0] == 'jmp':
         s = check_input_label(currentcode[1])
-        print('01111' + '000' + stringtobinary_8bit(str(curIndex-1)))
+        if s in labels.keys():
+            print('01111' + '000' + stringtobinary_8bit(str(curIndex-1)))
+        else:
+            R["Error"] = 1
     elif currentcode[0] == 'jlt':
         s = check_input_label(currentcode[1])
-        print('10000' + '000' + stringtobinary_8bit(str(curIndex-1)))
+        if s in labels.keys():
+            print('10000' + '000' + stringtobinary_8bit(str(curIndex-1)))
+        else:
+            R["Error"] = 1
     elif currentcode[0] == 'jgt':
         s = check_input_label(currentcode[1])
-        print('10001' + '000' + stringtobinary_8bit(str(curIndex-1)))
+        """ debug(labels)
+        print(s) """
+        if s in labels.keys():
+            print('10001' + '000' + stringtobinary_8bit(str(curIndex-1)))
+        else:
+            R["Error"] = 1
     elif currentcode[0] == 'je':
         s = check_input_label(currentcode[1])
-        print('10010' + '000' + stringtobinary_8bit(str(curIndex-1)))
+        if s in labels.keys():
+            print('10010' + '000' + stringtobinary_8bit(str(curIndex-1)))
+        else:
+            R["Error"] = 1
     else:
         print("Invalid command")
         R["Error"]=1
     # print(labels)
+    # for i in labels.keys():
+    #     if i in var.keys():
+    #         print("Error")
+    #         R["Error"] = 1
+    
     if(R["Error"]==1):
         print("1001100000000000")
         break
