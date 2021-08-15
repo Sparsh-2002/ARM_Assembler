@@ -1,3 +1,5 @@
+from read_file import *
+
 R = {
   "R0" : 1,
   "R1" : 0,
@@ -225,23 +227,24 @@ def storevar(variable):
   else:
     var[variable]=0
 
-fullcode=[]
 
-while(True):
-    fullcode.append(input())
-    temp = fullcode[-1]
+fullcode = []
+
+for line in list_of_instructions:
+    temp = line
+    #print(type(temp))
     if temp == "hlt":
       break
     islabel = check_label(temp,len(fullcode))
-    temp = temp.split(":")
-    #print(temp)
-    fullcode.pop() 
+    if(temp==""):
+      continue
+    temp.split(":")
     if islabel:
-      fullcode.append(temp[1].split())
+      fullcode.append(temp.split()[1:])
     else: 
-      fullcode.append(temp[0].split())
+      fullcode.append(temp.split())
 
-#print(len(fullcode))
+#print(fullcode)
 curIndex = 0
 while(True):
     if curIndex == len(fullcode):
