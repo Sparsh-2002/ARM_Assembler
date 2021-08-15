@@ -15,6 +15,7 @@ R = {
 
 labels={}
 
+var = {}
 
 def stringtobinary_8bit(string):
   n = int(string)
@@ -31,8 +32,10 @@ def stringtobinary_8bit(string):
   answer = answer[::-1]
   value += answer
   return value
-def debug():
-  for i in R.keys():
+
+
+def debug(temp):
+  for i in temp.keys():
     print(i +": "+ str(R[i]))
 
 def BinaryToDecimal(binary):
@@ -40,6 +43,7 @@ def BinaryToDecimal(binary):
     for digit in binary: 
         decimal = decimal*2 + int(digit) 
     return decimal
+  
 def DecimalToBinary(num):
     if num >= 1:
         DecimalToBinary(num // 2)
@@ -200,8 +204,12 @@ def Load(rx, memaddr):
 
 # Stores data from reg1 to mem_addr.
 def Store(rx, memaddr,i):
-    memaddr = R[rx]
+    if not(memaddr in var.keys()):
+      print("variable doesnt exist")
+      R["Error"]=1
+      return
     print('00101' + stringtobinary(rx[1:]) + stringtobinary_8bit(str(i)))
+    var[memaddr] = R[rx]
 
 def check_label(line,i):
     temp = line.split(":")
@@ -210,6 +218,12 @@ def check_label(line,i):
       return True
     return False    
 
+def storevar(variable):
+  if variable in var.keys():
+    print("Variable already defined")
+    R["Error"] = 1
+  else:
+    var[variable]=0
 
 fullcode=[]
 
@@ -226,53 +240,56 @@ while(True):
       fullcode.append(temp[1].split())
     else: 
       fullcode.append(temp[0].split())
-    
+
 #print(len(fullcode))
 curIndex = 0
 while(True):
-        if curIndex == len(fullcode):
-            print("1001100000000000")
-            break
-        currentcode = fullcode[curIndex]
+    if curIndex == len(fullcode):
+        print("1001100000000000")
+        break
+    currentcode = fullcode[curIndex]
+    
+    curIndex+=1
+    #print(currentcode)
+    if(currentcode[0]=="var"):
+        storevar(currentcode[1])
+    elif(currentcode[0]=="add"):
+        add(currentcode[1], currentcode[2], currentcode[3])
+    elif(currentcode[0]=="sub"):
+        sub(currentcode[1], currentcode[2], currentcode[3])
+    elif(currentcode[0]=="mul"):
+        multiply(currentcode[1], currentcode[2], currentcode[3])
+    elif(currentcode[0]=="xor"):
+        xor(currentcode[1], currentcode[2], currentcode[3])
+    elif(currentcode[0]=="or"):
+        OR(currentcode[1], currentcode[2], currentcode[3])
+    elif(currentcode[0]=="and"):
+        AND(currentcode[1], currentcode[2], currentcode[3])
+    elif(currentcode[0] == "mov"):
+        if currentcode[2][0] == '$':
+          move_imm(currentcode[1],int(currentcode[2][1:]))
+        else:
+          MoveRegister(currentcode[1], currentcode[2])
+    elif currentcode[0]=="st":
+        Store(currentcode[1], currentcode[2], curIndex)
+    elif(currentcode[0] == 'div'):
+        Divide(currentcode[1], currentcode[2])
+    elif(currentcode[0] == 'not'):
+        Invert(currentcode[1], currentcode[2])
+    elif(currentcode[0] == 'cmp'):
+        Compare(currentcode[1], currentcode[2])
+
+    elif(currentcode[0] == 'rs'):
+        right_shift(currentcode[1], int(currentcode[2][1:]))
+
+    elif(currentcode[0] == 'ls'):
+        left_shift(currentcode[1], int(currentcode[2][1:]))
         
-        curIndex+=1
-        #print(currentcode)
-        if(currentcode[0]=="add"):
-            add(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="sub"):
-            sub(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="mul"):
-            multiply(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="xor"):
-            xor(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="or"):
-            OR(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0]=="and"):
-            AND(currentcode[1], currentcode[2], currentcode[3])
-        if(currentcode[0] == "mov"):
-            if currentcode[2][0] == '$':
-              move_imm(currentcode[1],int(currentcode[2][1:]))
-            else:
-              MoveRegister(currentcode[1], currentcode[2])
-        if currentcode[0]=="st":
-            Store(currentcode[1], currentcode[2], curIndex)
-        if(currentcode[0] == 'div'):
-            Divide(currentcode[1], currentcode[2])
-        if(currentcode[0] == 'not'):
-            Invert(currentcode[1], currentcode[2])
-        if(currentcode[0] == 'cmp'):
-            Compare(currentcode[1], currentcode[2])
-
-        if(currentcode[0] == 'rs'):
-            right_shift(currentcode[1], int(currentcode[2][1:]))
-
-        if(currentcode[0] == 'ls'):
-            left_shift(currentcode[1], int(currentcode[2][1:]))
-            
-        if(R["Error"]==1):
-            print("1001100000000000")
-            break
-
+    elif(R["Error"]==1):
+        print("1001100000000000")
+        break
+    else:
+        print("kuch to gabdab hai daya")
         #debug()
 
 def stringtobinary_8bit(string):
