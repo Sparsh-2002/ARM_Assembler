@@ -138,7 +138,6 @@ def move_imm(R1,imm):
         if imm<0 or imm>255:
             R["Error"] = 1
             return
-        
         R[R1] = imm
         print("00010"+stringtobinary(R1[1:])+stringtobinary_8bit(imm))
     else:
@@ -154,7 +153,6 @@ def move_imm(R1,imm):
 #     print("00101"+stringtobinary(R1[1:])+stringtobinary(mem_add[0]))
 
 def unconditionaljump(mem_add):
-    
     print("01111"+ stringtobinary(mem_add))
     return True
 
@@ -302,14 +300,14 @@ for line in list_of_instructions:
     if temp == "hlt":
       break
     islabel = check_label(temp, len(fullcode))
+    temp.split(":")
+    #print(temp)
     if(temp == ""):
       continue
-    temp.split(":")
     if islabel:
       fullcode.append(temp.split()[1:])
     else:
       fullcode.append(temp.split())
-
 
 #print(fullcode)
 curIndex = 0
@@ -318,25 +316,57 @@ while(True):
         print("1001100000000000")
         break
     currentcode = fullcode[curIndex]
+    curIndex += 1
+    print(currentcode)
+    if(len(currentcode) == 0):
+        continue
     if(currentcode[0]=="hlt"):
         print("1001100000000000")
         break
-    curIndex+=1
-    #print(currentcode)
     if(currentcode[0]=="var"):
         storevar(currentcode[1])
     elif(currentcode[0]=="add"):
-        add(currentcode[1], currentcode[2], currentcode[3])
+        if(len(currentcode)==4):
+            add(currentcode[1], currentcode[2], currentcode[3])
+        else:
+            print("404 ERROR")
+            print("1001100000000000")
+            break
     elif(currentcode[0]=="sub"):
-        sub(currentcode[1], currentcode[2], currentcode[3])
+        if(len(currentcode) == 4):
+            sub(currentcode[1], currentcode[2], currentcode[3])
+        else:
+            print("404 ERROR")
+            print("1001100000000000")
+            break
     elif(currentcode[0]=="mul"):
-        multiply(currentcode[1], currentcode[2], currentcode[3])
+        if(len(currentcode) == 4):
+            multiply(currentcode[1], currentcode[2], currentcode[3])
+        else:
+            print("404 ERROR")
+            print("1001100000000000")
+            break
     elif(currentcode[0]=="xor"):
-        xor(currentcode[1], currentcode[2], currentcode[3])
+        if(len(currentcode) == 4):
+            xor(currentcode[1], currentcode[2], currentcode[3])
+        else:
+            print("404 ERROR")
+            print("1001100000000000")
+            break
     elif(currentcode[0]=="or"):
-        OR(currentcode[1], currentcode[2], currentcode[3])
+        if(len(currentcode) == 4):
+            OR(currentcode[1], currentcode[2], currentcode[3])
+        else:
+            print("404 ERROR")
+            print("1001100000000000")
+            break
     elif(currentcode[0]=="and"):
-        AND(currentcode[1], currentcode[2], currentcode[3])
+        if(len(currentcode) == 4):
+            AND(currentcode[1], currentcode[2], currentcode[3])
+        else:
+            print("404 ERROR")
+            print("1001100000000000")
+            break
     elif(currentcode[0] == "mov"):
         if currentcode[2][0] == '$':
             move_imm(currentcode[1],int(currentcode[2][1:]))
@@ -350,33 +380,15 @@ while(True):
         Invert(currentcode[1], currentcode[2])
     elif(currentcode[0] == 'cmp'):
         Compare(currentcode[1], currentcode[2])
-
     elif(currentcode[0] == 'rs'):
         right_shift(currentcode[1], int(currentcode[2][1:]))
-
     elif(currentcode[0] == 'ls'):
-        left_shift(currentcode[1], int(currentcode[2][1:]))
-        
+        left_shift(currentcode[1], int(currentcode[2][1:]))      
     elif(R["Error"]==1):
         print("1001100000000000")
         break
     else:
         print("kuch to gabdab hai daya")
+        break
         #debug()
-
-def stringtobinary_8bit(string):
-    n = int(string)
-    num = 0
-    answer=""
-    while n!=0 :
-        if n%2==1:
-            answer+="1"
-        else:
-            answer+="0"
-        n//=2
-    size = len(answer)
-    value = "0"*(8-size)
-    answer = answer[::-1]
-    value+=answer
-    return value
 
